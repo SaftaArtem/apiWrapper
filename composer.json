@@ -1,0 +1,24 @@
+{
+  "name": "safta/api-package",
+  "description": "A PHP wrapper for using Luminet Project API",
+  "authors": [
+    {
+      "name": "Artem Safta",
+      "email": "safta.artem@gmail.com"
+    }
+  ],
+  "require": {},
+  "require-dev": {
+    "phpunit/phpunit": "4.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Lantera\\Safta\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Lantera\\Safta\\Test\\": "tests"
+    }
+  }
+}

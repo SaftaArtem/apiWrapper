@@ -1,0 +1,20 @@
+{
+  "attributes": {
+    "term": "36"
+  },
+  "groups": {
+    "products": [
+      {
+        "attributes": {
+          "bearerSize": "100",
+          "serviceBandwidth": "1",
+          "postcode": "LE11 1RW",
+          "term": "36"
+        },
+        "code": "smartEPL",
+        "tag": "8b11c66e-1f18-4148-acf4-bb918bc0c7a6"
+      }
+    ],
+    "type": 1
+  }
+}
