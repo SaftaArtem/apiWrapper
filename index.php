@@ -90,7 +90,7 @@ $apiServiceUrl = 'https://qe2.exponential-e.com/cpq/api/v1/';
 
 $obj = new \Lantera\Safta\ApiService\Exponential($apiKey, $login, $postCode, $apiServiceUrl);
 
-$obj->getData('price');
+$obj->getData('quote');
 
 
 

@@ -24,12 +24,18 @@ class Exponential extends Base
     public function getData($type)
     {
         if ($productCatalogue = $this->getProductCatalogue()) {
+
+
+            $this->getProductsTermVariation($productCatalogue);
+            d('<h1>Fin</h1>');
+
+
             if ($type == 'quote') {
                 $quoteOptions = $this->formatProductCatalogueQuote($productCatalogue);
-                $this->getOptionData($quoteOptions,'/price/quote');
-            } elseif($type == 'price') {
+                $this->getOptionData($quoteOptions, 'price/quote');
+            } elseif ($type == 'price') {
                 $groupOptions = $this->formatProductCataloguePrice($productCatalogue);
-                $this->getOptionData($groupOptions,'/price/product');
+                $this->getOptionData($groupOptions, 'price/product');
             }
         }
         return false;
@@ -143,7 +149,8 @@ class Exponential extends Base
      * @param $prefix
      * @return bool|string
      */
-    private function getOptionData($options, $prefix) {
+    private function getOptionData($options, $prefix)
+    {
         $options = json_encode($options);
         $url = $this->apiServiceUrl . "$prefix?domain=$this->login&apiKey=$this->apiKey";
         $curlInit = curl_init();
@@ -158,13 +165,46 @@ class Exponential extends Base
         );
         $data = curl_exec($curlInit);
         curl_close($curlInit);
-
+        dd($prefix);
         d(json_decode($data, true));
+
         if ($data != '') {
             return $data;
         }
         return false;
     }
 
+    /**
+     * @param $productCatalogue
+     * @return array|bool products variation array with key equals variation of term [12, 24, 36...]
+     */
+    public function getProductsTermVariation($productCatalogue)
+    {
+        $products = [];
+        foreach ($productCatalogue as $product) {
+            if ($product['orderFormConfigurations'] == 1) {
+//                d($product);
+                foreach ($product['attributes'] as $attribute) {
+                    if ($attribute['name'] == 'term') {
+                        $min = $attribute['minimum'];
+                        $max = $attribute['defaultValue'];
 
+                        while ($min <= $max) {
+                            $products[$min][] = $product;
+                            $min += 12;
+                        }
+                    }
+                    if ($attribute['name'] == 'bearerSize') {
+                        dd($attribute['values']);
+                        dd($attribute['unitType']);
+                        }
+                }
+            }
+        }
+        d('-');
+        if (count($products) > 0) {
+            return $products;
+        }
+        return false;
+    }
 }
