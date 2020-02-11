@@ -8,34 +8,32 @@ use Lantera\Safta\Base as Base;
 class Exponential extends Base
 {
 
-    private $apiServiceUrl = null;
-    private $login = null;
-    private $apiKey = null;
-    public $postCode = null;
+    private $apiServiceUrl;
+    private $login;
+    private $apiKey;
+    public $postCode;
 
     public function __construct($apiKey, $login, $postCode, $apiServiceUrl)
     {
-        $this->postCode = $postCode;
         $this->apiKey = $apiKey;
         $this->login = $login;
+        $this->postCode = $postCode;
         $this->apiServiceUrl = $apiServiceUrl;
     }
 
+
     public function getData($type)
     {
-        if ($productCatalogue = $this->getProductCatalogue()) {
-
-
-            $this->getProductsTermVariation($productCatalogue);
-            d('<h1>Fin</h1>');
-
-
-            if ($type == 'quote') {
-                $quoteOptions = $this->formatProductCatalogueQuote($productCatalogue);
-                $this->getOptionData($quoteOptions, 'price/quote');
-            } elseif ($type == 'price') {
-                $groupOptions = $this->formatProductCataloguePrice($productCatalogue);
-                $this->getOptionData($groupOptions, 'price/product');
+        if ($this->apiKey && $this->login && $this->postCode && $this->apiServiceUrl) {
+            if ($productCatalogue = $this->getProductCatalogue()) {
+                if ($type == 'quote') {
+                    $quoteOptions = $this->formatProductCatalogueQuote($productCatalogue);
+                    return $this->getOptionData($quoteOptions, 'price/quote');
+                } elseif ($type == 'price') {
+                    $groupOptions = $this->getProductsTermVariation($productCatalogue);
+                    $t = json_decode($this->getOptionData($groupOptions, 'price/product'), true);
+                    return json_decode($this->getOptionData($groupOptions, 'price/product'), true);
+                }
             }
         }
         return false;
@@ -165,8 +163,8 @@ class Exponential extends Base
         );
         $data = curl_exec($curlInit);
         curl_close($curlInit);
-        dd($prefix);
-        d(json_decode($data, true));
+//        dd($prefix);
+//        d(json_decode($data, true));
 
         if ($data != '') {
             return $data;
@@ -176,35 +174,120 @@ class Exponential extends Base
 
     /**
      * @param $productCatalogue
-     * @return array|bool products variation array with key equals variation of term [12, 24, 36...]
+     * @return array|bool products variation array with key
      */
     public function getProductsTermVariation($productCatalogue)
     {
-        $products = [];
+        $groupData = [];
         foreach ($productCatalogue as $product) {
             if ($product['orderFormConfigurations'] == 1) {
-//                d($product);
+                $tmpParams = [];
                 foreach ($product['attributes'] as $attribute) {
                     if ($attribute['name'] == 'term') {
                         $min = $attribute['minimum'];
-                        $max = $attribute['defaultValue'];
-
+                        $max = $attribute['maximum'];
+                        if ($max === null) {
+                            $max = $attribute['defaultValue'];
+                        }
                         while ($min <= $max) {
-                            $products[$min][] = $product;
+                            $tmpParams['term'][] = intval($min);
                             $min += 12;
                         }
                     }
                     if ($attribute['name'] == 'bearerSize') {
-                        dd($attribute['values']);
-                        dd($attribute['unitType']);
+                        $values = $attribute['values'];
+                        $tmpParams['bearerSize'] = $values;
+                    }
+                    if ($attribute['name'] == 'serviceBandwidth') {
+                        if (count($attribute['values']) == 0) {
+                            $tmpParams['serviceBandwidth']['min'] = $attribute['minimum'];
+                            $tmpParams['serviceBandwidth']['max'] = $attribute['maximum'];
+                        } else {
+                            $tmpParams['serviceBandwidth'][] = $attribute['values'];
                         }
+                    }
+
+                }
+                if ($tmpParams['serviceBandwidth']['max'] == '@:bearerSize') {
+                    $tmpParams['serviceBandwidth']['max'] = max($tmpParams['bearerSize']);
+                } else {
+                    $tmpParams['serviceBandwidth']['max'] = 1000;
+                }
+
+                $tmpParams['serviceBandwidth'] = $this->generateBandWidth($tmpParams['serviceBandwidth']);
+
+
+                $params = [];
+                foreach ($tmpParams as $type => $variants) {
+                    $params[] = $variants;
+                }
+                $variants = $this->generateCombinations($params);
+                foreach ($variants as $variant) {
+                    $groupData['products'][] = [
+                        'attributes' => [
+                            'postcode' => $this->postCode,
+                            'bearerSize' => $variant[0],
+                            'serviceBandwidth' => $variant[1],
+                            'term' => $variant[2]
+                        ],
+                        'code' => $product['code'],
+                        'tag' => implode('_', $variant)
+                    ];
                 }
             }
         }
-        d('-');
-        if (count($products) > 0) {
-            return $products;
+        if (count($groupData) > 0) {
+            return $groupData;
         }
         return false;
     }
+
+    /**
+     * @param $serviceBandwidth
+     * @return array All variant serviceBandwidth from min to max
+     */
+    public function generateBandWidth($serviceBandwidth)
+    {
+        $min = $serviceBandwidth['min'];
+        $max = $serviceBandwidth['max'];
+        $result = [];
+        while ($min <= 60) {
+            if (intval($min) === 0) $min += 10;
+            $result[] = $min;
+            $min += 10;
+        }
+        while ($min <= $max) {
+            if ($min == 70) $min = 100;
+            $result[] = $min;
+            $min += 100;
+        }
+        return $result;
+    }
+
+    public function generateCombinations($arrays, $i = 0)
+    {
+        if (!isset($arrays[$i])) {
+            return array();
+        }
+        if ($i == count($arrays) - 1) {
+            return $arrays[$i];
+        }
+
+        // get combinations from subsequent arrays
+        $tmp = $this->generateCombinations($arrays, $i + 1);
+
+        $result = array();
+
+        // concat each array from tmp with each element from $arrays[$i]
+        foreach ($arrays[$i] as $v) {
+            foreach ($tmp as $t) {
+                $result[] = is_array($t) ?
+                    array_merge(array($v), $t) :
+                    array($v, $t);
+            }
+        }
+
+        return $result;
+    }
+
 }
