@@ -31,7 +31,6 @@ class Exponential extends Base
                     return $this->getOptionData($quoteOptions, 'price/quote');
                 } elseif ($type == 'price') {
                     $groupOptions = $this->getProductsTermVariation($productCatalogue);
-                    $t = json_decode($this->getOptionData($groupOptions, 'price/product'), true);
                     return json_decode($this->getOptionData($groupOptions, 'price/product'), true);
                 }
             }
