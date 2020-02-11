@@ -1,7 +1,11 @@
 {
-  "name": "ssaftaartem/apiwrapper",
+  "name": "saftaartem/apiwrapper",
   "type": "library",
   "description": "A PHP wrapper for using Luminet Project API",
+  "keywords": [
+    "saftaartem",
+    "apiwrapper"
+  ],
   "homepage": "https://github.com/ssaftaartem/apiwrapper",
   "license": "MIT",
   "authors": [
