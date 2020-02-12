@@ -3,36 +3,20 @@
 
 namespace Lantera\Safta\ApiService;
 
-use Lantera\Safta\Base as Base;
+use Lantera\Safta\Base;
 
 class Exponential extends Base
 {
 
-    private $apiServiceUrl;
-    private $login;
-    private $apiKey;
-    public $postCode;
-
-    public function __construct($apiKey, $login, $postCode, $apiServiceUrl)
-    {
-        $this->apiKey = $apiKey;
-        $this->login = $login;
-        $this->postCode = $postCode;
-        $this->apiServiceUrl = $apiServiceUrl;
-    }
-
-
     public function getData($type)
     {
-        if ($this->apiKey && $this->login && $this->postCode && $this->apiServiceUrl) {
-            if ($productCatalogue = $this->getProductCatalogue()) {
-                if ($type == 'quote') {
-                    $quoteOptions = $this->formatProductCatalogueQuote($productCatalogue);
-                    return $this->getOptionData($quoteOptions, 'price/quote');
-                } elseif ($type == 'price') {
-                    $groupOptions = $this->getProductsTermVariation($productCatalogue);
-                    return json_decode($this->getOptionData($groupOptions, 'price/product'), true);
-                }
+        if ($productCatalogue = $this->getProductCatalogue()) {
+            if ($type == 'quote') {
+                $quoteOptions = $this->formatProductCatalogueQuote($productCatalogue);
+                return $this->getOptionData($quoteOptions, 'price/quote');
+            } elseif ($type == 'quoting') {
+                $groupOptions = $this->getProductsTermVariation($productCatalogue);
+                return $this->getOptionData($groupOptions, 'price/product');
             }
         }
         return false;
@@ -44,7 +28,7 @@ class Exponential extends Base
      */
     private function getProductCatalogue()
     {
-        $url = $this->apiServiceUrl . "catalogue?domain=$this->login&apiKey=$this->apiKey";
+        $url = $this->apiServiceUrl . "catalogue?domain=$this->login&apiKey=$this->password";
         $curlInit = curl_init();
         curl_setopt($curlInit, CURLOPT_HEADER, 0);
         curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, 1);
@@ -139,36 +123,6 @@ class Exponential extends Base
         }
         return false;
 
-    }
-
-    /**
-     * @param $options
-     * @param $prefix
-     * @return bool|string
-     */
-    private function getOptionData($options, $prefix)
-    {
-        $options = json_encode($options);
-        $url = $this->apiServiceUrl . "$prefix?domain=$this->login&apiKey=$this->apiKey";
-        $curlInit = curl_init();
-        curl_setopt($curlInit, CURLOPT_HEADER, 0);
-        curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curlInit, CURLOPT_URL, $url);
-        curl_setopt($curlInit, CURLOPT_POST, 1);
-        curl_setopt($curlInit, CURLOPT_POSTFIELDS, $options);
-        curl_setopt($curlInit, CURLOPT_HTTPHEADER, array(
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen($options))
-        );
-        $data = curl_exec($curlInit);
-        curl_close($curlInit);
-//        dd($prefix);
-//        d(json_decode($data, true));
-
-        if ($data != '') {
-            return $data;
-        }
-        return false;
     }
 
     /**
@@ -289,4 +243,21 @@ class Exponential extends Base
         return $result;
     }
 
+
+    protected function validate()
+    {
+        $connection = $this->connection;
+        if (count($connection) > 0) {
+            foreach ($connection as $key => $param) {
+                if (!is_string($param)) {
+                    throw new \InvalidArgumentException("$key is not a string.");
+                }
+                if (strlen($param) < 3) {
+                    throw new \InvalidArgumentException("$key \"" . $param . "\" is too short, and thus invalid.");
+                }
+            }
+            return true;
+        }
+
+    }
 }

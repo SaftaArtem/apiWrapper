@@ -1,6 +1,6 @@
 <?php
-if (!defined('DS')){
-    define('DS',"/");
+if (!defined('DS')) {
+    define('DS', "/");
 }
 
 //if(defined('IS_DEVELOPER')===false && $_SERVER['REMOTE_ADDR'] == '194.29.63.73') {
@@ -8,7 +8,7 @@ if (!defined('DS')){
 //}
 define('IS_DEVELOPER', true);
 
-if (function_exists ('dd')===false) {
+if (function_exists('dd') === false) {
     function dd($object)
     {
         if (IS_DEVELOPER === false) return false;
@@ -19,7 +19,7 @@ if (function_exists ('dd')===false) {
 
     }
 }
-if (function_exists ('dlog')===false) {
+if (function_exists('dlog') === false) {
     function dlog($object)
     {
         if (IS_DEVELOPER) {
@@ -29,7 +29,7 @@ if (function_exists ('dlog')===false) {
     }
 }
 
-if (function_exists ('d')===false) {
+if (function_exists('d') === false) {
     function d($object)
     {
 
@@ -39,7 +39,7 @@ if (function_exists ('d')===false) {
     }
 }
 
-if (function_exists ('ci')===false) {
+if (function_exists('ci') === false) {
     function ci($class)
     {
         dd(get_class($class));
@@ -48,49 +48,68 @@ if (function_exists ('ci')===false) {
 }
 
 
-if (function_exists ('dbg')===false) {
-    function dbg(){
+if (function_exists('dbg') === false) {
+    function dbg()
+    {
         $val = debug_backtrace();
         $dbg = array();
         //error_reporting(E_ALL ^ E_NOTICE);
-        foreach($val as $d){
+        foreach ($val as $d) {
 
-            $dbg[] = $d['file']."->".$d['function'].":".$d['line'];
+            $dbg[] = $d['file'] . "->" . $d['function'] . ":" . $d['line'];
         }
 
         echo "<pre>";
         var_dump($dbg);
         echo "</pre>";
         die('-');
-    }}
+    }
+}
 
-if (function_exists ('ddbg')===false) {
-    function ddbg(){
+if (function_exists('ddbg') === false) {
+    function ddbg()
+    {
         $val = debug_backtrace();
         $dbg = array();
         //error_reporting(E_ALL ^ E_NOTICE);
-        foreach($val as $d){
+        foreach ($val as $d) {
 
-            $dbg[] = $d['file']."->".$d['function'].":".$d['line'];
+            $dbg[] = $d['file'] . "->" . $d['function'] . ":" . $d['line'];
         }
 
         echo "<pre>";
         var_dump($dbg);
         echo "</pre>";
 
-    }}
+    }
+}
 
 
 require_once "vendor/autoload.php";
 
-$apiKey = '0beb0298-779b-4da9-9e99-444ca691daf6';
-$login = 'luminet.co.uk';
-$postCode = "LE11 1RW";
-$apiServiceUrl = 'https://qe2.exponential-e.com/cpq/api/v1/';
 
-$obj = new \Lantera\Safta\ApiService\Exponential($apiKey, $login, $postCode, $apiServiceUrl);
+$postCode = 'LE11 1RW';
+$connection = [
+    'Virtual' => [
+        'login' => 'apiuser@luminet.co.uk',
+        'password' => 'kDJU4mni',
+        'postCode' => $postCode,
+        'apiServiceUrl' => 'https://apitest.virtual1.com/'
+    ],
+    'Exponential' => [
+        'login' => 'luminet.co.uk',
+        'password' => '0beb0298-779b-4da9-9e99-444ca691daf6',
+        'postCode' => $postCode,
+        'apiServiceUrl' => 'https://qe2.exponential-e.com/cpq/api/v1/'
+    ]
+];
+$obj = new \Lantera\Safta\Service();
+$result = $obj::getData($connection);
+d('fin');
 
-$obj->getData('price');
+
+
+
 
 
 
