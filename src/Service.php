@@ -19,10 +19,11 @@ class Service
                 $className = self::CLASSNAMESPACE.$apiName;
                 $apiObject = new $className();
                 $apiObject->setData($apiConnection);
-                $apiData = json_decode($apiObject->getData('quoting'), true);
+                $apiData = $apiObject->getData('quoting');
                 if ($apiData !== null && count($apiData) > 0) {
                     $result = array_merge($result, $apiData);
                 }
+                break;
             }
         }
         if (count($result) > 0) {

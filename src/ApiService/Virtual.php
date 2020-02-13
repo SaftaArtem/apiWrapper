@@ -14,7 +14,7 @@ class Virtual extends Base
             'terms' => [],
             'bandwidths' => [],
             'bearers' => [],
-            'accessTypes' => [],
+            'accessTypes' => ['Fibre'],
         ]
     ];
 
@@ -25,19 +25,30 @@ class Virtual extends Base
             $productVariation =  json_decode($this->getOptionData($this->defaultOptions, 'layer2-api/quoting'), true);
             if ($productVariation !== null && count($productVariation) > 0) {
                 $accessProducts = $productVariation['accessProducts'];
-                return json_encode($accessProducts);
-//                return json_encode($this->formatData($accessProducts));
+                return $this->formatData($accessProducts);
             }
         }
         return false;
     }
 
-//    protected function formatData($data)
-//    {
-//        foreach ($data as $product) {
-//            d($product);
-//        }
-//    }
+    protected function formatData($data)
+    {
+        $result = [];
+        foreach ($data as $product) {
+            $uniqueId = md5($product['productReference'].'_'.$product['term'].'_'.$product['bandwidth'].'_'.$product['bearer']);
+            $result[] = [
+                'unique_id' => $uniqueId,
+                'supplier' => $product['carrier'],
+                'type' => $product['accessType'],
+                'term' => $product['term'],
+                'bandwidth' => $product['bandwidth'],
+                'bearer_size' => $product['bearer'],
+                'one_cost' => $product['installCharges'],
+                'monthly_cost' => $product['monthlyFees'],
+            ];
+        }
+        return $result;
+    }
 
     protected function getOptionData($options, $prefix)
     {

@@ -1,10 +1,223 @@
 {
-  "postcode": "LE11 1RW",
-  "filter": {
-    "suppliers": [],
-    "terms": [],
-    "bandwidths": [],
-    "bearers": [],
-    "accessTypes": []
-  }
+  "accountId": null,
+  "quotedAt": "2020-02-13T12:34:18.3754076Z",
+  "attributes": {
+    "term": "12",
+    "value": "18215.36"
+  },
+  "groups": [
+    {
+      "type": 1,
+      "attributes": {},
+      "products": [
+        {
+          "code": "smartEPL",
+          "tag": "8b11c66e-1f18-4148-acf4-bb918bc0c7a6",
+          "name": "Smart EPL",
+          "attributes": {
+            "bearerSize": "100",
+            "btoPopCode": null,
+            "postcode": "LE11 1RW",
+            "serviceBandwidth": "50",
+            "term": "12",
+            "isLa": null,
+            "mdl": null,
+            "pop": null,
+            "quantity": "1"
+          },
+          "messages": [],
+          "prices": [
+            {
+              "code": "smartEPL-sEPLBtoEad",
+              "name": "Smart EPL - BT Openreach",
+              "hasPrice": true,
+              "validUntil": "2020-04-13T00:00:00Z",
+              "attributes": {
+                "serviceBandwidth": "50",
+                "bearerSize": "100",
+                "term": "12",
+                "postcode": "LE111RW",
+                "mdl": "0",
+                "pop": "Loughborough ATE HPO - LE11 1BT",
+                "isLa": "1",
+                "btoPopCode": "Loughborough ATE HPO@LE11 1BT",
+                "isFlexZone": "0",
+                "quantity": "1",
+                "nthPop": "0",
+                "isResilient": "0",
+                "postcodeB": null,
+                "exchangeA": null,
+                "exchangeB": null,
+                "eaDoffnetAend": null,
+                "eaDoffnetBend": null,
+                "popPricingTier": "0"
+              },
+              "messages": [],
+              "nonRecurring": {
+                "price": 2405.80
+              },
+              "monthly": {
+                "price": 136.00
+              }
+            },
+            {
+              "code": "smartEPL-sEPLBtwEad",
+              "name": "Smart EPL - BT Wholesale",
+              "hasPrice": true,
+              "validUntil": "2020-04-13T00:00:00Z",
+              "attributes": {
+                "bearerSize": "100",
+                "externalRef": "bda3e850-6168-429f-ad15-a0e97f994fd0",
+                "popName": "Telephone House Birmingham",
+                "popPostcode": "B31JX",
+                "postcode": "LE111RW",
+                "serviceBandwidth": "50",
+                "term": "12",
+                "quantity": "1",
+                "timeTaken": "00:00:00.0540709"
+              },
+              "messages": [],
+              "nonRecurring": {
+                "price": 2127.50
+              },
+              "monthly": {
+                "price": 243.90
+              }
+            },
+            {
+              "code": "smartEPL-sEPLTtEad",
+              "name": "Smart EPL - TalkTalk",
+              "hasPrice": true,
+              "validUntil": "2020-04-13T00:00:00Z",
+              "attributes": {
+                "bearerSize": "100",
+                "externalRef": null,
+                "popName": "LOUGHBOROUGH",
+                "popPostcode": null,
+                "postcode": "LE111RW",
+                "serviceBandwidth": "50",
+                "term": "12",
+                "quantity": "1",
+                "timeTaken": "00:00:00.0013769",
+                "popCode": "EMLGHBO"
+              },
+              "messages": [],
+              "nonRecurring": {
+                "price": 2127.50
+              },
+              "monthly": {
+                "price": 243.72
+              }
+            },
+            {
+              "code": "smartEPL-sEPLVmEad",
+              "name": "Smart EPL - Virgin Media",
+              "hasPrice": true,
+              "validUntil": "2020-04-13T00:00:00Z",
+              "attributes": {
+                "bearerSize": "100",
+                "externalRef": "31708025",
+                "popName": "Telephone House Birmingham",
+                "popPostcode": "B31JX",
+                "postcode": "LE111RW",
+                "toid": null,
+                "serviceBandwidth": "50",
+                "term": "12",
+                "quantity": "1",
+                "netStatus": "Serviceable Building",
+                "accessFlavour": "On Net",
+                "isQuickQuote": "True"
+              },
+              "messages": [],
+              "nonRecurring": {
+                "price": 1380.0
+              },
+              "monthly": {
+                "price": 224.26
+              }
+            },
+            {
+              "code": "smartEPL-sEPLCityfibre",
+              "name": "Smart EPL - City Fibre",
+              "hasPrice": false,
+              "validUntil": "2020-04-13T00:00:00Z",
+              "attributes": {
+                "bearerSize": "100",
+                "cityCode": null,
+                "cityName": null,
+                "postcode": "LE11 1RW",
+                "serviceBandwidth": "50",
+                "term": "12",
+                "quantity": "1"
+              },
+              "messages": [],
+              "nonRecurring": {
+                "price": 0.0
+              },
+              "monthly": {
+                "price": 0.0
+              }
+            }
+          ]
+        }
+      ],
+      "tag": "2616683a-0300-448b-7039-a8d427ec4094"
+    },
+    {
+      "type": 2,
+      "attributes": {
+        "term": "12",
+        "value": "18215.36"
+      },
+      "products": [
+        {
+          "code": "groupTotal",
+          "tag": "groupTotal",
+          "name": null,
+          "attributes": {},
+          "messages": [],
+          "prices": [
+            {
+              "code": "groupTotal",
+              "name": " Total",
+              "hasPrice": true,
+              "validUntil": "0001-01-01T00:00:00",
+              "attributes": {},
+              "messages": null,
+              "nonRecurring": {
+                "price": 8040.80
+              },
+              "monthly": {
+                "price": 847.88
+              }
+            }
+          ]
+        },
+        {
+          "code": "grandTotal",
+          "tag": "grandTotal",
+          "name": null,
+          "attributes": {},
+          "messages": [],
+          "prices": [
+            {
+              "code": "grandTotal",
+              "name": "Grand Total",
+              "hasPrice": false,
+              "validUntil": "0001-01-01T00:00:00",
+              "attributes": {},
+              "messages": null,
+              "nonRecurring": {
+                "price": 8040.80
+              },
+              "monthly": {
+                "price": 847.88
+              }
+            }
+          ]
+        }
+      ],
+      "tag": "summary"
+    }
+  ]
 }

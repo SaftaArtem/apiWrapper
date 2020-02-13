@@ -90,17 +90,17 @@ require_once "vendor/autoload.php";
 
 $postCode = 'LE11 1RW';
 $connection = [
-    'Virtual' => [
-        'login' => 'apiuser@luminet.co.uk',
-        'password' => 'kDJU4mni',
-        'postCode' => $postCode,
-        'apiServiceUrl' => 'https://apitest.virtual1.com/'
-    ],
     'Exponential' => [
         'login' => 'luminet.co.uk',
         'password' => '0beb0298-779b-4da9-9e99-444ca691daf6',
         'postCode' => $postCode,
         'apiServiceUrl' => 'https://qe2.exponential-e.com/cpq/api/v1/'
+    ],
+    'Virtual' => [
+        'login' => 'apiuser@luminet.co.uk',
+        'password' => 'kDJU4mni',
+        'postCode' => $postCode,
+        'apiServiceUrl' => 'https://apitest.virtual1.com/'
     ]
 ];
 $obj = new \Lantera\Safta\Service();

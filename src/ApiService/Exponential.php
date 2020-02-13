@@ -7,6 +7,11 @@ use Lantera\Safta\Base;
 
 class Exponential extends Base
 {
+    protected $params = [
+        [100, 1000, 10000],
+        [12, 24, 36],
+        [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000]
+    ];
 
     public function getData($type)
     {
@@ -16,7 +21,8 @@ class Exponential extends Base
                 return $this->getOptionData($quoteOptions, 'price/quote');
             } elseif ($type == 'quoting') {
                 $groupOptions = $this->getProductsTermVariation($productCatalogue);
-                return $this->getOptionData($groupOptions, 'price/product');
+                $optionData = $this->getOptionData($groupOptions, 'price/product');
+                return $this->formatData($optionData);
             }
         }
         return false;
@@ -131,57 +137,18 @@ class Exponential extends Base
      */
     public function getProductsTermVariation($productCatalogue)
     {
+        $params = $this->params;
+        $variants = $this->generateCombinations($params);
         $groupData = [];
         foreach ($productCatalogue as $product) {
             if ($product['orderFormConfigurations'] == 1) {
-                $tmpParams = [];
-                foreach ($product['attributes'] as $attribute) {
-                    if ($attribute['name'] == 'term') {
-                        $min = $attribute['minimum'];
-                        $max = $attribute['maximum'];
-                        if ($max === null) {
-                            $max = $attribute['defaultValue'];
-                        }
-                        while ($min <= $max) {
-                            $tmpParams['term'][] = intval($min);
-                            $min += 12;
-                        }
-                    }
-                    if ($attribute['name'] == 'bearerSize') {
-                        $values = $attribute['values'];
-                        $tmpParams['bearerSize'] = $values;
-                    }
-                    if ($attribute['name'] == 'serviceBandwidth') {
-                        if (count($attribute['values']) == 0) {
-                            $tmpParams['serviceBandwidth']['min'] = $attribute['minimum'];
-                            $tmpParams['serviceBandwidth']['max'] = $attribute['maximum'];
-                        } else {
-                            $tmpParams['serviceBandwidth'][] = $attribute['values'];
-                        }
-                    }
-
-                }
-                if ($tmpParams['serviceBandwidth']['max'] == '@:bearerSize') {
-                    $tmpParams['serviceBandwidth']['max'] = max($tmpParams['bearerSize']);
-                } else {
-                    $tmpParams['serviceBandwidth']['max'] = 1000;
-                }
-
-                $tmpParams['serviceBandwidth'] = $this->generateBandWidth($tmpParams['serviceBandwidth']);
-
-
-                $params = [];
-                foreach ($tmpParams as $type => $variants) {
-                    $params[] = $variants;
-                }
-                $variants = $this->generateCombinations($params);
                 foreach ($variants as $variant) {
                     $groupData['products'][] = [
                         'attributes' => [
                             'postcode' => $this->postCode,
                             'bearerSize' => $variant[0],
-                            'serviceBandwidth' => $variant[1],
-                            'term' => $variant[2]
+                            'term' => $variant[1],
+                            'serviceBandwidth' => $variant[2]
                         ],
                         'code' => $product['code'],
                         'tag' => implode('_', $variant)
@@ -243,7 +210,6 @@ class Exponential extends Base
         return $result;
     }
 
-
     protected function validate()
     {
         $connection = $this->connection;
@@ -259,5 +225,41 @@ class Exponential extends Base
             return true;
         }
 
+    }
+
+    /**
+     * List with all modification
+     * @return array
+     */
+    protected function getAddonsList()
+    {
+        return true;
+    }
+
+    protected function formatData($data)
+    {
+        $data = json_decode($data, true);
+        $result = [];
+        foreach ($data as $product) {
+            if (isset($product['prices']) && $product['prices']['hasPrice']) {
+                $attributes = $product['attributes'];
+                $uniqueId = md5($product['code'].'_'.$attributes['term'].'_'.$attributes['serviceBandwidth'].'_'.$attributes['bearerSize']);
+                $supplier = explode('- ', $product['name'])[1];
+                $oneOfCost = $product['prices'][0]['nonRecurring']['price'];
+                $monthlyCost = $product['prices'][0]['monthly']['price'];
+                $result[] = [
+                    'unique_id' => $uniqueId,
+                    'supplier' => $supplier,
+                    'type' => 'lite',
+                    'term' => $attributes['term'],
+                    'bandwidth' => $attributes['serviceBandwidth'],
+                    'bearer_size' => $attributes['bearerSize'],
+                    'one_cost' => $oneOfCost,
+                    'monthly_cost' => $monthlyCost,
+                ];
+            }
+        }
+        $adsd = '';
+        return $result;
     }
 }
