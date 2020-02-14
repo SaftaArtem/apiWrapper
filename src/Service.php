@@ -23,13 +23,9 @@ class Service
                 if ($apiData !== null && count($apiData) > 0) {
                     $result = array_merge($result, $apiData);
                 }
-                break;
             }
         }
-        if (count($result) > 0) {
-            return $result;
-        }
-        return false;
+        return $result;
     }
 
 }

@@ -39,7 +39,6 @@ abstract class Base
         if ($data != '') {
             return $data;
         }
-        return false;
     }
 
     public function setData(array $connection)

@@ -25,7 +25,6 @@ class Exponential extends Base
                 return $this->formatData($optionData);
             }
         }
-        return false;
     }
 
     /**
@@ -44,7 +43,6 @@ class Exponential extends Base
         if ($data != '') {
             return json_decode($data, true);
         }
-        return false;
     }
 
     /**
@@ -78,11 +76,8 @@ class Exponential extends Base
                     ];
                 }
             }
-            if (count($groupData) > 0) {
-                return $groupData;
-            }
+            return $groupData;
         }
-        return false;
     }
 
     /**
@@ -127,7 +122,6 @@ class Exponential extends Base
             ];
             return $result;
         }
-        return false;
 
     }
 
@@ -156,10 +150,7 @@ class Exponential extends Base
                 }
             }
         }
-        if (count($groupData) > 0) {
-            return $groupData;
-        }
-        return false;
+        return $groupData;
     }
 
     /**
@@ -240,26 +231,32 @@ class Exponential extends Base
     {
         $data = json_decode($data, true);
         $result = [];
-        foreach ($data as $product) {
-            if (isset($product['prices']) && $product['prices']['hasPrice']) {
-                $attributes = $product['attributes'];
-                $uniqueId = md5($product['code'].'_'.$attributes['term'].'_'.$attributes['serviceBandwidth'].'_'.$attributes['bearerSize']);
-                $supplier = explode('- ', $product['name'])[1];
-                $oneOfCost = $product['prices'][0]['nonRecurring']['price'];
-                $monthlyCost = $product['prices'][0]['monthly']['price'];
-                $result[] = [
-                    'unique_id' => $uniqueId,
-                    'supplier' => $supplier,
-                    'type' => 'lite',
-                    'term' => $attributes['term'],
-                    'bandwidth' => $attributes['serviceBandwidth'],
-                    'bearer_size' => $attributes['bearerSize'],
-                    'one_cost' => $oneOfCost,
-                    'monthly_cost' => $monthlyCost,
-                ];
+        foreach ($data as $key => $product) {
+            if (isset($product['prices'])) {
+                if (count($product['prices']) > 0) {
+                    foreach ($product['prices'] as $item) {
+                        if (!$item['hasPrice']) continue;
+                        $attributes = $item['attributes'];
+                        $uniqueId = md5($item['code'].'_'.$attributes['term'].'_'.$attributes['serviceBandwidth'].'_'.$attributes['bearerSize']);
+                        $chunkName = explode('- ', $item['name']);
+                        if (count($chunkName) <= 1) continue;
+                        $supplier = explode('- ', $item['name'])[1];
+                        $oneOfCost = $item['nonRecurring']['price'];
+                        $monthlyCost = $item['monthly']['price'];
+                        $result[] = [
+                            'unique_id' => $uniqueId,
+                            'supplier' => $supplier,
+                            'type' => 'lite',
+                            'term' => $attributes['term'],
+                            'bandwidth' => $attributes['serviceBandwidth'],
+                            'bearer_size' => $attributes['bearerSize'],
+                            'one_cost' => $oneOfCost,
+                            'monthly_cost' => $monthlyCost,
+                        ];
+                    }
+                }
             }
         }
-        $adsd = '';
         return $result;
     }
 }
