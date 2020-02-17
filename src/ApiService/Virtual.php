@@ -3,12 +3,11 @@
 
 namespace Lantera\Safta\ApiService;
 
-use Lantera\Safta\Base;
 
 class Virtual extends Base
 {
     protected $defaultOptions = [
-        'postcode' => 'LE11 1RW',
+        'postcode' => null,
         'filter' => [
             'suppliers' => [],
             'terms' => [],
@@ -20,8 +19,8 @@ class Virtual extends Base
 
     public function getData($type)
     {
-        $this->defaultOptions['postcode'] = $this->postCode;
         if ($type == 'quoting') {
+            if ($this->defaultOptions['postcode'] === null)  $this->defaultOptions['postcode'] = $this->postCode;
             $productVariation =  json_decode($this->getOptionData($this->defaultOptions, 'layer2-api/quoting'), true);
             if ($productVariation !== null && count($productVariation) > 0) {
                 $accessProducts = $productVariation['accessProducts'];

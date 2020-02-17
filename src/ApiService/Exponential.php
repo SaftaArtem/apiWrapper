@@ -1,9 +1,6 @@
 <?php
 
-
 namespace Lantera\Safta\ApiService;
-
-use Lantera\Safta\Base;
 
 class Exponential extends Base
 {
@@ -16,10 +13,7 @@ class Exponential extends Base
     public function getData($type)
     {
         if ($productCatalogue = $this->getProductCatalogue()) {
-            if ($type == 'quote') {
-                $quoteOptions = $this->formatProductCatalogueQuote($productCatalogue);
-                return $this->getOptionData($quoteOptions, 'price/quote');
-            } elseif ($type == 'quoting') {
+             if ($type == 'quoting') {
                 $groupOptions = $this->getProductsTermVariation($productCatalogue);
                 $optionData = $this->getOptionData($groupOptions, 'price/product');
                 return $this->formatData($optionData);
@@ -43,86 +37,6 @@ class Exponential extends Base
         if ($data != '') {
             return json_decode($data, true);
         }
-    }
-
-    /**
-     * Format Data for getProductPricing Request
-     * @param $productCatalogue
-     * @return bool|false|array
-     */
-    private function formatProductCataloguePrice($productCatalogue)
-    {
-        if (count($productCatalogue) > 0) {
-            $groupData = [];
-            foreach ($productCatalogue as $product) {
-                if ($product['orderFormConfigurations'] == 1) {
-                    $productAttributes = [];
-                    foreach ($product['attributes'] as $attributes) {
-                        if ($attributes['name'] == 'term') {
-                            $productAttributes['postcode'] = $this->postCode;
-                            $productAttributes['term'] = $attributes['defaultValue'];
-                        }
-                        if ($attributes['name'] == 'bearerSize') {
-                            $productAttributes['bearerSize'] = $attributes['defaultValue'];
-                        }
-                        if ($attributes['name'] == 'serviceBandwidth') {
-                            $productAttributes['serviceBandwidth'] = $attributes['defaultValue'];
-                        }
-                    }
-                    $groupData['products'][] = [
-                        'attributes' => $productAttributes,
-                        'code' => $product['code'],
-                        'tag' => '8b11c66e-1f18-4148-acf4-bb918bc0c7a6'
-                    ];
-                }
-            }
-            return $groupData;
-        }
-    }
-
-    /**
-     * @param $productCatalogue
-     * @return array|bool All products
-     */
-    private function formatProductCatalogueQuote($productCatalogue)
-    {
-        if (count($productCatalogue) > 0) {
-            $groupData = [];
-            $groupDataChunk = [];
-            foreach ($productCatalogue as $product) {
-                if ($product['orderFormConfigurations'] == 1) {
-                    $productAttributes = [];
-                    foreach ($product['attributes'] as $attributes) {
-                        if ($attributes['name'] == 'term') {
-                            $productAttributes['postcode'] = $this->postCode;
-                            $productAttributes['term'] = $attributes['defaultValue'];
-                            $term = $attributes['defaultValue'];
-                        }
-                        if ($attributes['name'] == 'bearerSize') {
-                            $productAttributes['bearerSize'] = $attributes['defaultValue'];
-                        }
-                        if ($attributes['name'] == 'serviceBandwidth') {
-                            $productAttributes['serviceBandwidth'] = $attributes['defaultValue'];
-                        }
-                    }
-
-
-                    $groupDataChunk['type'] = 1;
-                    $groupDataChunk['products'][] = [
-                        'attributes' => $productAttributes,
-                        'code' => $product['code'],
-                        'tag' => '8b11c66e-1f18-4148-acf4-bb918bc0c7a6'
-                    ];
-                    $groupData[] = $groupDataChunk;
-                }
-            }
-            $result = [
-                'attributes' => ['term' => $term],
-                'groups' => $groupData
-            ];
-            return $result;
-        }
-
     }
 
     /**
@@ -154,27 +68,10 @@ class Exponential extends Base
     }
 
     /**
-     * @param $serviceBandwidth
-     * @return array All variant serviceBandwidth from min to max
+     * @param $arrays
+     * @param int $i
+     * @return array
      */
-    public function generateBandWidth($serviceBandwidth)
-    {
-        $min = $serviceBandwidth['min'];
-        $max = $serviceBandwidth['max'];
-        $result = [];
-        while ($min <= 60) {
-            if (intval($min) === 0) $min += 10;
-            $result[] = $min;
-            $min += 10;
-        }
-        while ($min <= $max) {
-            if ($min == 70) $min = 100;
-            $result[] = $min;
-            $min += 100;
-        }
-        return $result;
-    }
-
     public function generateCombinations($arrays, $i = 0)
     {
         if (!isset($arrays[$i])) {
@@ -216,15 +113,6 @@ class Exponential extends Base
             return true;
         }
 
-    }
-
-    /**
-     * List with all modification
-     * @return array
-     */
-    protected function getAddonsList()
-    {
-        return true;
     }
 
     protected function formatData($data)

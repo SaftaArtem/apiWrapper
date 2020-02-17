@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Lantera\Safta;
+namespace Lantera\Safta\ApiService;
 
 
 abstract class Base

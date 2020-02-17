@@ -1,10 +1,7 @@
 <?php
 
 
-namespace Lantera\Safta;
-
-//use Lantera\Safta\ApiService\Exponential as Exponential;
-//use Lantera\Safta\ApiService\Virtual;
+namespace Lantera\Safta\ApiService;
 
 class Service
 {

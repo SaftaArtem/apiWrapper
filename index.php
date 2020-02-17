@@ -103,9 +103,9 @@ $connection = [
         'apiServiceUrl' => 'https://apitest.virtual1.com/'
     ]
 ];
-$obj = new \Lantera\Safta\Service();
+$obj = new \Lantera\Safta\ApiService\Service();
 $result = $obj::getData($connection);
-d('fin');
+d(count($result));
 
 
 
